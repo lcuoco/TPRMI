@@ -1,33 +1,41 @@
 package rmi.cuoco;
 
 
+import rmi.cuoco.server.manager.ClientManager;
 import rmi.cuoco.server.object.Message;
 import rmi.cuoco.server.object.Utilisateur;
 import rmi.cuoco.server.inter.IChat;
+import rmi.cuoco.thread.ThreadPoll;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.util.List;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 public class Main {
+ClientManager clientManager;
 
-    public static void main(String[] args) {
-        IChat chat;
-            try {
-                LocateRegistry.getRegistry(9002);
-                chat = (IChat) Naming.lookup("rmi://localhost:9002/chat");
-                chat.addMessage(new Message("hello", new Utilisateur("1", "Lucas")));
-                List<Message> test=  chat.getChat();
+    protected Main() throws RemoteException {
+    }
+
+    public static void main(String[] args) throws RemoteException {
+        ClientManager clientManager = new ClientManager();
 
 
-                if(test.size() != 0) test.forEach( t -> System.out.println(t.getContenu()));
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Entrez votre pseudo : ");
+            int id = clientManager.firstConnexion();
+            Utilisateur user = new Utilisateur( id, sc.nextLine());
+            ThreadPoll tp = new ThreadPoll((IChat) clientManager.getInstance(), user);
+            tp.start();
+            System.out.println("Connexion du client : " + user.getId());
+            while(true)
+            {
+                clientManager.addMessage(new Message(sc.nextLine(), user));
 
-            } catch (NotBoundException | MalformedURLException | RemoteException e) {
-                e.printStackTrace();
+
             }
+
+
         }
 
 }
