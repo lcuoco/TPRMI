@@ -1,4 +1,4 @@
-package rmi.cuoco.thread;
+package rmi.cuoco.client.thread;
 
 import rmi.cuoco.server.inter.IChat;
 import rmi.cuoco.server.object.Message;

@@ -12,4 +12,5 @@ public interface IChat extends Remote {
     List<Message> getChat() throws RemoteException;
     void notifyUsers(List<Message> messages) throws RemoteException;
     Message getMessage(int position) throws RemoteException;
+    void register(ICallbackListenner callbackListenner) throws RemoteException;
 }

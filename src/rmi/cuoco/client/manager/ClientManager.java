@@ -1,5 +1,7 @@
-package rmi.cuoco.server.manager;
+package rmi.cuoco.client.manager;
 
+import rmi.cuoco.client.Main;
+import rmi.cuoco.server.inter.ICallbackListenner;
 import rmi.cuoco.server.inter.IChat;
 import rmi.cuoco.server.object.Message;
 import rmi.cuoco.server.object.Utilisateur;
@@ -11,6 +13,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ClientManager {
@@ -25,8 +28,11 @@ public class ClientManager {
     public Remote init()
     {
         try {
+            ICallbackListenner callbackListenner = new Main();
+
             LocateRegistry.getRegistry(9002);
             this.chat = (IChat) Naming.lookup("rmi://localhost:9002/chat");
+            this.chat.register(callbackListenner);
             this.messages = chat.getChat();
 
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
@@ -54,6 +60,7 @@ public class ClientManager {
 
     public void addMessage(Message message) throws RemoteException {
         this.chat.addMessage(message);
+
     }
 
     public void getMessage() throws RemoteException {
